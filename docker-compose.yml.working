@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  database:
+    image: mysql/mysql-server
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=matt
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=Password123
+
+  api:
+    image: julianshaw2000/dockaws-api
+    ports:
+      - "8080:80"
+    depends_on:
+      - database
+    environment:
+      - Database__Provider=MySql
+      - Database__ConnectionString=server=database;database=matt;uid=user;pwd=Password123
+
+  app:
+    image: julianshaw2000/dockaws-app
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    environment:
+      - BASE_API_URL=http://localhost:8080/api
